@@ -158,3 +158,153 @@ p4 <- ggplot(day4, aes(x = weekday, y = n2)) +
 
 
 grid.arrange(p1,p2,p3,p4, top = textGrob("Total of Blue Bikes Usage in Four Different Weeks",gp = gpar(fontsize = 15, font = 3)))
+
+Sun <- bike_data %>%
+  group_by(hour, start_date) %>%
+  summarise(total = n()) %>%
+  filter(start_date < as_date("2018-07-02"))
+
+Mon <- bike_data %>%
+  group_by(hour, start_date) %>%
+  summarise(total = n()) %>%
+  filter(start_date < as_date("2018-07-03") & start_date > as_date("2018-07-01"))
+
+Tue <- bike_data %>%
+  group_by(hour, start_date) %>%
+  summarise(total = n()) %>%
+  filter(start_date < as_date("2018-07-04") & start_date > as_date("2018-07-02"))
+
+Wed <- bike_data %>%
+  group_by(hour, start_date) %>%
+  summarise(total = n()) %>%
+  filter(start_date < as_date("2018-07-05") & start_date > as_date("2018-07-03"))
+
+Thu <- bike_data %>%
+  group_by(hour, start_date) %>%
+  summarise(total = n()) %>%
+  filter(start_date < as_date("2018-07-06") & start_date > as_date("2018-07-04"))
+
+Fri <- bike_data %>%
+  group_by(hour, start_date) %>%
+  summarise(total = n()) %>%
+  filter(start_date < as_date("2018-07-07") & start_date > as_date("2018-07-05"))
+
+Sat <- bike_data %>%
+  group_by(hour, start_date) %>%
+  summarise(total = n()) %>%
+  filter(start_date < as_date("2018-07-08") & start_date > as_date("2018-07-06"))
+
+m1 <- Sun %>% ggplot(aes(x = hour, y = total)) +
+  geom_line(lty = 2) +
+  geom_point() +
+  labs(title = "Sunday", x = "Hour",  y = "Total") +
+  theme_bw()
+
+m2 <- Mon %>% ggplot(aes(x = hour, y = total)) +
+  geom_line(lty = 2) +
+  geom_point() +
+  labs(title = "Monday", x = "Hour",  y = "Total") +
+  theme_bw()
+
+m3 <- Tue %>% ggplot(aes(x = hour, y = total)) +
+  geom_line(lty = 2) +
+  geom_point() +
+  labs(title = "Tuesday", x = "Hour",  y = "Total") +
+  theme_bw()
+
+m4 <- Wed %>% ggplot(aes(x = hour, y = total)) +
+  geom_line(lty = 2) +
+  geom_point() +
+  labs(title = "Wednesday", x = "Hour",  y = "Total") +
+  theme_bw()
+
+m5 <- Thu %>% ggplot(aes(x = hour, y = total)) +
+  geom_line(lty = 2) +
+  geom_point() +
+  labs(title = "Thursday", x = "Hour",  y = "Total") +
+  theme_bw()
+
+m6 <- Fri %>% ggplot(aes(x = hour, y = total)) +
+  geom_line(lty = 2) +
+  geom_point() +
+  labs(title = "Friday", x = "Hour",  y = "Total") +
+  theme_bw()
+
+m7 <- Sat %>% ggplot(aes(x = hour, y = total)) +
+  geom_line(lty = 2) +
+  geom_point() +
+  labs(title = "Saturday", x = "Hour",  y = "Total") +
+  theme_bw()
+
+grid.arrange(m1,m2,m3,m4,m5,m6,m7, top = textGrob("Total of Blue Bikes Usage in Hour for One Week",gp = gpar(fontsize = 15,font = 3)))
+
+gender <- bike_data %>%
+  group_by(gender) %>%
+  summarise(total = n()) %>%
+  filter(gender != "Prefer not to say")
+
+gender %>% ggplot(aes(x = gender, y = total, fill = gender)) +
+  geom_col() +
+  geom_text(aes(label = total), vjust = -0.1) +
+  labs(main = "Gender on Blue Bikes Usage",
+       x = "Gender", 
+       y = "Total") + 
+  guides(fill = FALSE) +
+  theme_bw()
+  
+  ggplot(data = bike_data, aes(x = distances)) +
+  geom_density(alpha = 0.3, fill = "black") +
+  guides(fill = FALSE) +
+  labs(title = "Desntiy Plot of Distance", 
+       x = "Distance", 
+       y = "Density") +
+  annotate(geom ="text", x = 6, y = 0.3, label = "
+           mean = 1.97\n 
+           sd = 1.37\n
+           min = 0\n
+           max = 11.24",
+           color = "red",
+           size = 4) +
+  theme_bw()
+  
+  gender_distance <- bike_data %>%
+  group_by(gender, distances) %>%
+  summarise(total = n())  %>%
+  filter(gender != "Prefer not to say")
+
+gender_distance %>% ggplot(aes(x = distances)) +
+  geom_density(alpha = 0.3, fill = "black") +
+  guides(fill = FALSE) +
+  labs(title = "Density Plot of Distance Based on Gender" ,
+       x = "Distance",
+       y = "Density") +
+  facet_wrap(~ gender) 
+  
+  t.test(gender_distance$distances ~ gender_distance$gender)
+  
+  gender_distance %>%
+  ggplot(aes(x = gender, y = distances, fill = gender)) +
+  geom_boxplot() +
+  labs(title = "Boxplot of Gender vs Distance",
+       x = "Gender", 
+       y = "Distances") +
+  guides(fill=guide_legend(title = "Gender")) +
+  theme_bw()
+  
+  #starting location
+#mapping 
+bike_data %>% 
+  leaflet() %>%
+  setView(lng = -71.0589, lat = 42.3601, zoom = 13) %>% 
+  addTiles() %>%
+  addHeatmap(lng = bike_data$start_long, lat = bike_data$start_lat, max = 2, radius = 15)
+  
+  #ending location
+#mapping
+bike_data %>% 
+  leaflet() %>%
+  setView(lng = -71.0589, lat = 42.3601, zoom = 13) %>% 
+  addTiles() %>%
+  addHeatmap(lng = bike_data$end_long, lat = bike_data$end_lat, max = 2, radius = 15)
+  
+  
